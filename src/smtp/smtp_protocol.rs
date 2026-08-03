@@ -9,6 +9,8 @@ use log::{debug, warn}; // Add warn
 use mailparse::{addrparse, MailAddr}; // Add mailparse imports
                                       // Keep only used IO traits/types
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt};
+use std::env;
+
 // Remove unused TcpStream import
 
 /// Represents the possible states during an SMTP session.
@@ -70,8 +72,12 @@ where
     /// This should be called immediately after establishing a connection.
     /// Transitions the state implicitly (caller should expect `Greeted` state next).
     pub async fn send_greeting(&mut self) -> Result<()> {
-        self.write_line("220 MailLaser SMTP Server Ready").await // Informative greeting.
-    }
+    // Liest die Variable zur Laufzeit oder nutzt einen Standardwert
+    let greeting = env::var("SMTP_GREETING")
+        .unwrap_or_else(|_| "220 MailLaser SMTP Server Ready".to_string());
+
+    self.write_line(&greeting).await
+   }
 
     /// Processes a single command line received from the client.
     ///
