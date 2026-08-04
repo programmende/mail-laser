@@ -272,8 +272,9 @@ where
         // Validiert die Adresse mit der mailparse-Bibliothek
         match addrparse(addr_spec) {
             Ok(parsed_addresses) => {
-                if let Some(MailAddr::Single(single_addr)) = parsed_addresses.first() {
-                    Some(single_addr.address.clone())
+                if let Some(mailparse::MailAddr::Single(single_addr)) = parsed_addresses.first() {
+                    // Hier wurde .address zu .addr geändert, um zu SingleInfo zu passen
+                    Some(single_addr.addr.clone())
                 } else {
                     warn!("smtp_protocol: Keine gültige Einzeladresse gefunden in: '{}'", addr_spec);
                     None
